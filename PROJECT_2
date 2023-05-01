@@ -1,0 +1,10 @@
+Configuration as Code (CasC) - dodatek Jenkinsa pozwalajacy zapisac jego konfig jako kod. Mozemy potem ja dolaczyc w trackie uruchamiania Jenkinsa lub
+przeladowac w trakcie jego dzialania
+
+Groovy - Jenkins moze by konfigurowany bezposrednio jezykiem Groovy. Bardziej skomplikowana procedura.
+Plik groovy umieszcza sie wewnatrz katalogu init.groovy.d Jenkins, podczas uruchomienia, wykonuje wszystkie skrypty, ktore tam sie znajduja.
+
+Groovy - pochodna Javy
+
+CasC nie wspiera instalacji innych pluginow w Jenkinsie. W zamian oferuje komende jenkins-plugin-cli lub skrypt install-plugins.sh
+dzieki ktoremu mozemy ogarniac dodatki w ramach pliku

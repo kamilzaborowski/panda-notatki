@@ -1,0 +1,26 @@
+JENKINS - najpopularniejszy reprezentant narzedzi CI/CD do centralnego sterowania oraz automatyzowania procesow budowania i wdrazania aplikacji.
+Alternatywy: TeamCity, GitLab, Bamboo, Azure DevOps i innne (wieeele innych)
+
+Do uruchomienia kontenera Jenkinsa:
+nazwa dla niego Jenkins
+przekierowac 8080 na inny np 8880
+
+Jenkins:
+darmowy (licencja MIT)
+wysoce konfigurowalny
+sterowany z GUI oraz CASC (Configuration As a Code)
+Posiada ogrom dodatkow
+
+Pojęcia:
+Controller - Glowna instancja Jenkinsa, Deleguje prace, laduje i instale wtyczki ora przechwouje pliki konf i hasla. Zawiera rowniez apke web (GUI)
+Agent - Dodatkowa instancja (serwer lub kontener) - laczy sie z kontrolerem Jenkinsa i wykonuje zlecone zadania
+Node - Instancja, ktora jest czescia srodowiska Jenkins przeznaczona do wykonywania zleonych zadan. Zarowno controller jak i agent sa wezlami (nodes)
+Executor - Proces wykonujacy prace na wezle (node) Wezel moze mniec dowolna liczbe executorow
+
+Workspace - Folder w wezle JEnkinsa, w ktorym wykonywane sa wszystkie zadania oraz domyslnie przechowywane artefakty. Folder moze byc wyczyszcony na zyczenie usera
+Build - Wynik pojedynczego uruchomienia projektu
+Project - Skonfigurowany przez usera uzytkownika opis pracy, ktora Jenkins powinien wykonac, np budowa apki, zrobienie testow
+Plugin - rozszerzenie Jenkinsa
+
+Freestyle Jon - podstawowa forma tworzenia zadań
+W pipeline piszemy za pomoca YAMLA, freestyle wyklikujemy

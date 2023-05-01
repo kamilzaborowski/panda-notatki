@@ -1,0 +1,115 @@
+Dockerfile
+Docker-compose
+
+Dockerfile - plik zawierajacy zestaw instrukcji ze swoim syntaxem
+Obraz Dockera - surowa ale juz wyrobiona forma do dalszego tworzenia (docker build)
+
+Kontener - produkt ktory moze wykonywac zadana mu prace, do zamiany obrazu w kontener - docker run
+
+docker build [opcje] path/kontekst
+
+[opcje] - dodatkowe opcje wyboru, np wskazanie nazwy budowanego obrazu
+kontekst - sciezka do folderu na lokalnej maszynie. Path to odnosnik do URL do zasobow zdalnych, np repo GIT
+docker build . - szukaj dockerfile w miejscu, w ktorym obecnie sie znajduje
+
+Kontekst - katalog, zawierajacy plik Dockerfile oraz inne niezbedne w procesie budowania elementy, wykorzystywany w trakcie budowania obrazu
+Kontektst moze przyjac forme sciezki względnej (".","..") i bezwzglednej (pelna sciezka do katalogu "/")
+
+docker build -t panda:latest . - zbuduj w obecnej sciezce z tagiem wersji latest, nazwij obraz panda
+
+Do budowania obrazu, potrzebna podstawka (nginx, busybox, ubuntu, java itp.)
+
+W dockerfilu:
+FROM - uzyj bazowego obrazu, WYMAGANY na poczatku kazdego dockerfile
+RUN - uruchom komende podczas budowy obrazu
+ENV - ustawiamy zmienna srodowiskowa wew kontenera
+USER - ustaw usera operujacego wew obrazu
+VOLUME - podlacz lokalny katalog do kontenera, domyslnie bedzie szukal na hoscie
+WORKDIR - Ustaw work directory obrazu
+CMD - uruchom komende przy starcie nowego kontenera, ustaw domyslne parametry uruchomienia
+ENTRYPOINT - Uruchom komende przy starcie nowego kontenera
+ADD - dodaj plik do kontenera z lokalnego systemu plikow lub z adresu zdalnego, rozpakowuje dodane archiwa
+COPY - skopiuj plik do kontenera z lokalnego sys plikow
+ARG - dodaj argument do kontenera, przekazywanie zmiennych z dockerfile
+EXPOSE - ustaw domyslny port, na ktorym nasluchuje kontener, zostanie upubliczniony po wykonaniu docker run -p
+Rzadkie:
+ONBUILD - umozliwia dodanie instrukcji uruchamianej przy uzywaniu stworzonego obrazu jako obrazu bazowego w innych dockerfilach
+STOPSIGNAL - Umozliwia wyslanie konkretnego sygnalu (np kill -9) przy wyjsciu z kontenera
+HEALTHCHECK - Umozliwia wykonanie komendy sprawdzajacej stan procesu w kontenerze (np curl)
+SHELL - umozliwia Ustawienie domyslnej powloki w kontenerze
+
+CMD i ENTRYPOINT
+
+CMD ["komenda", "parametr1", parametr2"]
+Zarowno w CMD i ENTRYPOINT komende oraz parametry podaje sie jako elementy tablicy np df -h = ["df","-h"]
+Mozna tez CMD komenda parametr1 parametr2 - stworzy wtedy dodatkowa powloke /bin/bash i odpali dopiero wew kontenera
+
+ADD vs COPY
+
+COPY moze tylko kopiowac z lokalnego sys plikow
+ADD ma wszystko co COPY + kopiuje z URL bezposrednio do kontenera i rozpakowuje archiwa (np tar.gz)
+
+ENTRYPOINT czy CMD ? 
+
+W obu przypadkach komenda wykonana jest na nowo utworzonym kontenerze (w przeciwienstwie do RUN)
+
+Powinno byc tylko raz (interpreter wywola ostatnie wystapienie, jezeli bedzie wiecej)
+ENTRYPOINT traktowany jak uruchomienie komendy, CMD jako jego uzupelnienie
+CMD sluzy do ustawiania domyslnych wartosci parametrow dla uruchamianej komendy
+Parametry CMD moga byc latwo nadpisane w trakcie docker run
+
+Najbezpieczniej korzystac ze skladni [] (tablica), uzywac ENTRYPOINT, a CMD jako uzupelnienie, ktore mozna zawsze podmienic w parametrach
+
+.dockerignore pelni podobna funkcje jak .gitignore, pliki w nim zawarte beda pominiete przy wykonywaniu instrukcji COPY lub ADD z poziomu Dockerfile
+
+Docker registry - zdalny serwer, na ktorym domyslnie rpzechowywane sa wszystkiue obrazy dockera
+
+docker login - pozwala zalogowac sie do domyslnego serwera Docker Registry
+
+docker login <adres> - pozwala zalogowac sie do wlasnego serwera z repo kontenerow
+
+Docker compose - tworzy odizolowanych wielekontenerowych srodowisk za pomoca jednej komendy w oparciu o docker-compose.yml
+
+Kontenery nim opisane nazywamy serwisami
+
+W ramach niego mozemy zdefiniwoac wszystkie parametry, ktore ustawiamy podczas odpalenia docker run
+
+Kazdy docker-compose.yml musi posiadac oznaczenie wersji oraz definicje min jednego serwisu
+
+komendy
+docker-compose up - utworz i wystartuj kontenery, -d odpali w tle (detached)
+docker-compose ps - pokaze uruchomione kontenery, ale tylko dla tego pliku compose
+docker-compose logs - logi
+docker-compose run <service> <cmd> - uruchomi komende <cmd> w serwisie <service>, czyli wew kontenera
+docker-compose stop - zatrzymaj serwisy
+docker-compose down - zatrzyma i usunie wszytskie obiekty z docker-compose.yml
+docker-compose scale - ustaw liczbe kontenerow dla konkretnego serwisu
+docker-compose top - pokaz uruchomione procesy
+
+Compose umozlwiai kontenerom obsluge dynamicznych parametrow w postaci zmiennych:
+bezposrednie odwolanie do srodowiskowej
+wprowadzenie jej do docker-compose
+np 
+version: '2.4'
+  services:
+    jenkins:
+      image: jenkins/jenkins:${TAG}
+
+mozna z plikiem .env (bardziej DEV)
+TAG=latest
+
+Kolejnosc brania parametrow (od najwyzszego do najnizszego):
+docker-compose.yml - zmienne srodowiskowe - plik .env - Dockerfile
+
+docker-compose domyslnie wrzuca jej do jednej podsieci nazwaprojektu_default
+
+Definiowana nazwa katalogu, lub z --project-name podczas uruchomienia
+
+Kontenery odpytuja sie po DNS
+
+docker-compose -f docker-compose.base.yml -f docker-compose.prod.yml up - mozliwosc uruchamiania wielu plikow docker-compose.yml jednoczesnie
+Pozwala to nadpisywac konf pliku bazowego dodatkowym, specyficznym dla pozadanej konfiguracji
+
+base - zawiera podstawe kazdego srodowiska, przykladowo bierzemy yml dla produkcji i zapuszczamy
+
+

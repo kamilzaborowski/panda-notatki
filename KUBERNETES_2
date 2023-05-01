@@ -1,0 +1,50 @@
+Kubernetes - praktyka
+
+yaml
+apiVersion: <wersja>
+kind: <zasób>
+metadata:
+  name: <nazwa>
+spec:
+  <specyfikacja zasobu>
+
+Metody generowania yamla:
+
+    kubectl create deploy nginx --image=nginx --dry-run=client -o yaml - wygeneruje yamla
+kubectl create deploy nginx --image=nginx --dry-run=server -o yaml - wygeneruje yamla dla servera, ze strategią
+
+Uzywanie dokumentacji
+kubneretes.io.docs/home
+
+Najciezej - pisac samemu : )
+
+kubectl api-resources - lista dostepnych api do uzycia w yamlach
+
+kubectl apply -f plik.yaml
+- tworzenie nowych zasobow zdefiniowanych w pliku
+- zarzadzanie deklaratywne zasobami k8s
+- k8s weryfikuje czy zasoby zostaly poprawnie uruchomione oraz dba o ich aktualny stan
+- aktualny stan moze zostac zastapiony stanem pozadanym za pomoc kolejnej komendy apply
+- zasoby sa definiowane w bazie ETCD oraz uruchamiane za pomoca kontrolerow
+
+kubectl create -f plik.yaml - wypierany
+- imperatywne zarzadnie zasobami k8s
+- zasoby tworzone przez API k8s
+- tworzenie nowych zasobow zdefiniowanych w pliku
+- reczne uruchamianie zasobow oraz manualna weryfikacja
+
+Kube Controller Manager sprawdza status obiektow w klastrze poprzez 2 stany:
+current state - stan obecny danego obiektu
+desired state - stan oczekiwany, opisujacy przykladowo jakie PODy sa uruchomione na jakich wezlach czy liczbe replik
+
+kubectl get pod -o wide - wyswietla wiecej info, np IP PODa oraz wyszczegolniony node
+
+kubectl get pod -n namespace - k8s pozwala na rozdzielenie
+
+Replication Controller odpowiada za zachowanie odpowiedniej ilosci replik, ktore sa zdefiniowane
+
+Kazdy serwis posiada swoj wlasny DNS. Dzieki niemu PODy moga sie komunikwac miedzy soba. Jelsi serwis zdefiniowany jest w innym ns po jego nazwie
+dodaj nazwe przestrzeni nazw:
+<nazwa-serwisu>.<namespace>
+
+sudo kubectl port-forward pod/result-7445db8f84-7cd84 --address 0.0.0.0 -n result 8080:80 - przyklad tymczasowego przekierowania portów np dla testów

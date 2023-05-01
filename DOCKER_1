@@ -1,0 +1,95 @@
+Konteneryzacja - zamiast VMek, silnik konteneryzacji
+Kontener to zwykły proces na poziomie OSa, jest bardzo lekki
+Można go postawić w parę sekund : )
+Wydzielona logicznie część sys oper, pozwala na pełną izolację wszystkich procesów.
+Do uruchomienia potrzebny obraz dockerowy
+Jednorazowość - 
+przechodniość (ephemerality) - po jego zabiciu, wszystkie dane też znikają (ofc można podpinać zew nośniki danych) 
+przenośność - Do uruchomienia potrzebny obraz dockerowy
+bezstanowość - niezależność względem innych kontenerów (nie ma wiedzy o innych kontenerach, wykonuje tylko swoje zadanie)
+niezmienność - podobnie jak przechodniość - rzeczy znikają wraz ze śmiercią kontenera
+lekkość - szybko wstają
+
+Instalacja dockera z curlem
+curl -fsSL https://get.docker.com/ | sh - sam wszystko poustawia :) Używać tylko przy PEWNYM ŹRÓDLE !!!
+
+Dockera używamy z elewacją uprawnień (sudo) 
+np
+sudo groupadd docker
+sudo usermod -aG docker $USER a dla append, bez tego wywali wszystkie grupy !!!
+newgrp docker - refresh naszych grup
+
+Do zadania na instalke plus grupy z Ansiblem, można zobaczyc folder Vagrant na swojej maszynie (init.yml, Vagrantfile i requirements.yml)
+
+Obraz dockera - lekki, autonomiczny, zdatny do uruchomienia pakiet oprogramowania, posiada wszystko co niezbedne do uruchomienia w niej apki, czyli:
+kodu apki, runtime, narzędzia systemowe,biblioteki sys, domyślne ustawienia (pliki konf, zmienne środowiskowe itp)
+
+docker images - pokaż obrazy
+docker pull - pobierz obraz (bez uruchamiania) z neta, serwera
+docker push - wyślij nowy obraz
+docker rmi - usuń obraz
+
+docker run - utworz lub uruchom komende w nowym kontenerze
+docker start/stop - start stop kontenera
+ps / ps -a - pokaz uruchomione lub wszystkie
+
+rm - usun kontener
+logs - pokaz logi
+inspect - sprawdz detale dot. danego zasobu dockera np kontenera
+info - pokaz informacje o zasobach lokalnych i konfigu
+
+docker run hello-world - odpala, jak nie ma, najpierw sobie zrobi pull : ) (z Docker Huba)
+
+docker ps - odpalam, nie ma nic :o
+docker ps -a pokazuje wszystko, ale jak nie pokazuje tego jednego odpalonego ?
+
+docker system prune -a - usunie wszystkie nieuzywane kontenery (opis po odpaleniu opcji, mozna tez --force)
+
+Ustawienia kontenera:
+docker run <opcje> <obraz>
+
+docker run -it ubuntu - sesja interaktywna, kontener nie zostanie zamkniety bezposrednio po wykonaniu swojej komendy. NIE DZIAŁA NA WSZYSTKIE KONTENERY !!!!
+Bo musi to być system, w którym może być sys operacyjny
+
+docker run hello-world wykona w terminalu i wyswietli logi
+Natomiast docker run -d <obraz> wykona w trybie detached, nie zajmie terminala i nie wywali logow, dobre na skrypty
+
+docker run --name <nazwa> <obraz> - żeby nie dawało tych smiesznych nazw
+docker run -it -d --name <nazwa> obraz - tworzy pod sesje i bedzie Up (nie umrze ten kontener)
+
+SIEC
+
+docker network komenda:
+connect (przypnij do istniejacej),create,rm,ls
+docker run -p 80:8080 nginx  (forwarding z wewnatrz kont do macierzystego hosta)
+
+docker exec -it ubuntu /bin/bash - sesja interakt z kontenerem daje przekazanie wszystkich strumieni (STDIN,STDOUT,STDERR) do konsoli uruchomieniowej,
+w której wykonaliśmy komendę. Wywołanie sesji tworzy nowy proces, niezależny od tego już kontenerowego
+
+Przykładowo busybox nie ma basha, ale ma sh, czyli /bin/sh
+
+Montowanie zasobów do kontenera
+
+Dwie możliwośći trwałego zapisu:
+volumes
+bind-mounts
+
+Volume (wolumen) - folder w systemie hosta, który jest zarządzany wyłącznie przez daemon Dockera. Żaden inny proces ani user nie powinien mieć możliwości modyfikacji
+Domyslnie w Linuchu w /var/lib/docker/volumes
+
+docker volume create, ls, rm
+
+Bind-mounts, podobnie jak wolumen w systemie hosta zapisywany, ale w przeciwienstwie do niego nie ma stalej sciezki, mozna w dowolnym miejscu przechowywac,
+folder musi istniec przed montowaniem
+
+docker run -v lub --volume
+--mount dla bind-mounta
+Mozna uzywac obu dla obu przypadkow !!!
+
+host:kontener:opcje np:
+docker run -d --name <container_name> -v host:/kontener <obraz> -v - chęc podpiecia zew dysku, nie oznacza volume !!!
+docker run -d --name <container_name> -v <wolumen>:/kontener <obraz> - bez ścieżki - wolumen, ze ścieżką - bind-mount
+
+Z tego co mowi Michał - wolumeny najczesciej uzywane, a bind-mount raczej do developmentu
+
+

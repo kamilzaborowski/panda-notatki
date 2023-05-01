@@ -1,0 +1,120 @@
+WPROWADZENIE
+
+Kubernetes (k8s) - platforma open-source do orkiestracji skonteneryzowanych apek. Koordynuje dzialanie klastra zlozonego z wielu polaczonych
+ze soba serwerow, tworzacych jedna, logiczna calosc. Pozwala na automatyzacje i zapis konfigu w postaci kodu.
+
+Orkiestracja (orchestration) - zautomatyzowana konfiguracja, koordynacja i zarzadzanie systemami komputerowymi oraz apkami
+
+Cechy:
+service discovery
+load balancing
+zarzadzanie przestrzenia dyskowa
+samoleczenie
+zarzadzanie zasobami kontenerow
+zarzadzanie haslami i konfigiem
+automatyczne wdrozenia
+
+Infra klastra k8s sklada sie z 3 komponentow:
+Control Plane
+Nodes
+ETCD
+
+Dwa pierwsze komponenty to role przyjmowane przez serwery w klastrze. ETCD to baza danych NoSQL, ktora moze, ale nie musi byc odrebnym komponentem klastra.
+
+Control Plane pelni role Mastera, czyli serwera zarzadzajacego dzialaniem klastra, planuje i zleca wdrozenie apki (scheduling and distributing apps).
+Kontroluje rowniez stan apki poprzez skalowanie i aktualizowanie.
+
+Glowne zasoby w Control Plane:
+kube-apiserver
+kube-scheduler
+kube-controller-manager
+ETCD
+
+Node - czesc klastra, na ktorej uruchomione sa apki. Control Plane przesyla info do procesu kubelet, ktory uruchomiony jest na serwerze dzialajacym jako
+Node. Komunikacja odbywa sie za pomoca kube-api.
+
+ETCD - nie zawsze odrebna czesc klastra. Jest nia tylko w niektorych prod klastrach.
+Baza danych typu klucz-wartosc. Przechowuje wszystkie info
+
+Kubectl - narzedzie pozwalajace na poalczenie sie do klastra i zarzadzanie nim przy uzyciu linii komend (terminala). Komunikacja nastepuje
+poprzez kube-api.
+
+Projektowanie klastra nalezy rozpoczac od zdefiniowania doczego dany klaster bedzie uzywany. Najpopularniejesz rozwiazania:
+
+Minikube - cele testowe i edu
+Sredni klaster - do uruchomienia malej apki na srodowisku nonprod
+Klaster HA - do apki prod
+Klaster HA z odrebna baza ETCD - do utrzymania apek krytycznych
+
+Minikube - Zalety to:
+szybki konfig
+minimalne wykorzystanie zasobow podczas emulowania k8s
+Nie sklada sie z CP oraz Node
+
+Klaster HA - posiada wiele serwerow Node oraz przynajmniej dwa typu Control Plane
+Dobra praktyka to rozmieszczanie ich w osobnych serwerowniach, co jeszcze bardziej zwieksza bezpieczenstwo calego klastra
+Dodatkowke serwery CP dzialaja w trybie standby, zabezpieczajac glowny serwer. w razie utraty polaczenie z aktywnym CP, zapasowy serwer przejmie
+jego role.
+
+Turnkey:
+samodzielne tworzenie klastra, zarzadzanie, utrzymanie, dbanie o security, aktualizacje
+wieksza swoboda oraz niezaleznosc dostawcy (unikniecie tzw Vendor Lock)
+Narzedzia:
+kOps, Vagrant, OpenShift
+
+Hosted:
+Utrzymanie po stronie dostawcy
+aktualizacja k8s po stronie dostawcy
+potencjalnie drozsze rozwiazanie
+trudniejsza migracja do konkurencyjnego srodowiska
+Dostepne narzedzia:
+EKS, AKS, GKE, OpenShift Enterprise
+
+Zasoby - k8s operuje na resources. Sa domyslne zasoby (tabelka z prezki). Kazdy z nich moze byc obslugiwany poprzez zestaw podstawowych komend
+m.in. namespaces, nodes, pods, services, deployments, replicasets, persistentvolumes, persistentvolumeclaims
+
+kubectl <cmd> <resource>
+
+Przykladowe cmd:
+get - dane o zasobach
+describe - pobierz szczegolowe dane o zasobach
+delete - usun wybrany zasob
+create - utworz zasob
+label - dodaj etykiete dla danego obiektu w formacie key=value
+
+Namespace sluzy do izolacji zasobow pomiedzy wieloma userami, zepsolami czy projektami na klastrach k8s. Nie nalezy ich stosowac do oddzielania
+rodzajow serwisow czy wersji oprogramowania.
+Domyslnie k8s tworzy nastepujace namespace:
+default - wszystkie obiekty tworzone przez usera
+kube-node-lease - przygotowane pod nadchodzaca funkcjonalnosc
+kube-public - uzywany do zadan zwiazanych z zabezpieczeniami
+kube-system - tu znaduja sie pody systemowe
+
+Pod - k8s-owa abstrakcja reprezentujaca grupe jednego lub wiecej (zazwyczaj dwoch) kontenerow aplikacyjnych i zasobow udostepnionych tym
+kontenerom:
+storage (wolumeny)
+podsiec (unikalny adres IP wew klastra)
+informacja jak uruchomic kazdy kontener (porty, obraz, tag itp)
+
+Pod zawsze jest jednostka podstawowa dla klastra (atomic). Istnieje tylko z danym kontenerem - jezeli wszystkie kontenery poda zostana usuniete, pod rowniez
+
+kubectl pod:
+run - uruchom kontener w podzie
+describe - szczegolowe dane o podach
+logs - logi danego poda lub kontenera
+exec - uruchom komende w kontenerze (podobnie jak docker exec)
+
+Deployment - wdrazanie skonteneryzowanych apek w klastrze. W ramach deploymentu okreslamy, ktore obrazy kontenerow uruchomic oraz w jaki sposob
+aktualizowac powstale na ich podstawie serwisy.
+Po wywolaniu deploymentu, master planuje (schedule) rozmieszczenie kontenerow na konkretnych wezlach (node) nalezacych do klastra
+W momencie, gdy deployment jest juz uruchomiony, Kubernetes Deployment Controller stale monitoruje ich prace. W przypadku problemow kontroler
+probuje odtworzyc konfig korzystajac z dostepnych zasobow. Jest to mechanizm samoleczenia (self-healing).
+
+Serwisy: - byt w k8s do ktorego mozemy podpiac sie np po DNSie, dodatkowo przy wiekszej ilosci replik, bedzie load-balancowal ruch np na obie repliki
+ClusterIP - jego ruch nie wychodzi poza klaster. Cel - by jakis kontener dostal sie do innego po nazwie serwisu do żądanego
+NodePort - mozemy wystawic dany port poza nasz klaster (zazwyczaj porty powyzej 30000)
+ExternalName - serwisy majace polaczenie z innymi rzeczami poza klastrem, przydatne np przy migracji baz danych przy zmianie nazwy DNS DB
+LoadBalancer - zazwyczaj dziala w chmurze, tworzac dodatkowy loadbalancer na zewnatrz naszego klastra, tworzac ruch do wew naszego klastra
+
+
+

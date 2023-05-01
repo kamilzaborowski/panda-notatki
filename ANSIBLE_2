@@ -1,0 +1,64 @@
+Wywołanie roli
+
+By wywolac role trzeba ja zainstalowac, dodac wew playbooka, odpalamy z ansible-playbook
+
+ansible-galaxy init <rola> - stworzy nowa strukture pod role
+
+Strukture roli można tworzyc po swojemu
+Minimalna rola musi zawierac przynajmniej katalog tasks z plikiem main.yml
+
+Rolę należy skopiować do jednej ze sciezek:
+~/.ansible/roles
+/usr/share/ansible/roles
+/etc/ansible/roles
+
+Kolejnosc od gory do dolu
+
+W folderze defaults wew pliku main.yml mozna zdefiniowac domyslne wartosci zmiennych, ktore nie sa okreslone w innym miejscu. Wartosci te maja najnizszy mozliwy priorytet odczytu
+Folder files są tam pliki, które można użyc w taskach roli (np w celu skopiowania ich na hosta docelowego)
+Folder handlers (wywołania w pliku main.yml)
+Folder meta przechowuje metadane jak nazwa kolekcji, wersja, autor czy info o zaleznosciach. Niezbędny folder by ansible-galaxy mogło rolę zainstalowac !!!
+Folder tasks, w plikach .yml definiujemy taski. Te znajdujace sie w main.yml zostana wykonane
+
+Folder templates - szablony plikow, ktorych tresc ma byc modyfikowana np za pomoca zmiennych
+Folder tests - pliki, ktore umozliwajaj testy danej roli. Ulatwia wdrozenie def infrastruktury w procesy CI/CD
+Folder vars, jak defaults - umieszczamy def zmiennych, jednak o wyzszym prio od defaults
+
+Zmienne definiowane w rozny sposob, w zaleznosci od miejsca oraz formatu plików
+UZycie zmiennej wymaga uzycia notacji w Jinja2
+Można przekształac w dowolny sposób dostępny w tym silniku
+W przypadku YAML, znak {{i}} jest znakiem specjalnym, przez co Jinja2 musi byc otoczone przez ""
+np username: "{{ username }}"
+   password: "{{ password }}"
+
+Fakty - zestaw danych i wlasciwosci systemy, analizowane sa przed wywolaniem zadania. Pozwala na tworzenie, gdy spelnimy dany warunek, np system operacyjny
+Linux lub Windows
+Zbieranie faktow wydluza dzialanie playbooka i mozna wylaczyc.
+
+ansible -m setup <host> - uzyska info o wszystkich dostepnych dla hosta faktow
+{{ ansible_system }} - do faktu nalezy odwolywac sie tak samo jak do innych zmiennych Ansible
+
+Handlery - taski, ktore moga byc uruchomione tylko przez inny task. Pozwala ustalic kolejnosc wywołania zadań.
+np
+- name: restart docker
+  service: "name=docker state={{ docker_restart_handler_state }}"
+  ignore_errors: "{{ ansible_check_mode }}"
+
+  Wywołanie handlera po deployu:
+  -name: Configure Docker daemon options.
+  copy:
+    content: "{{ docker_daemon_options | to_nice_json }}"
+    dest: /etc/docker/daemon.json
+    mode: 0644
+  when: docker_daemon_options.keys() | lenght > 0
+  notify: restart docker
+
+W przeciwienstwie do playbooka, task nie definiujhe sekcji wywolania. Skladnia roli zaczyna sie w miejscu, gdzie w playbooku defin. taski
+Dodatk klauzula include_takss pozwala nam na pobranie i wykonanie innego taska na poczatku. Pozwala na wykonyw wszystkich taskow sekwencyjnie
+
+- include_tasks: inny_task
+- name: nazwataska
+  apt:
+    name:
+    - nano
+    - net-utils

@@ -1,0 +1,68 @@
+Repo binarne - miejsce, w ktorym mozna przechowywac pliki wynikowe buildow, czyli tzw artefakty.
+Dodatkowo repa te moga pelnic funkcje local cache, lokalna kopia firm trzecich (np pliki instalacyjne)
+
+Repo binarne vs git
+
+git glownie pliki tekstowe np kod zrodlowy, a artifactory pliki binarne i metadane, nie przechowuje kodu zrodlowego
+Arti dzielone na typy repo, moze dzialac jako cache zew plikow binarnych
+
+git nie powinien zawierac plikow binarnych, jest podzielony na galezie
+
+Arti rozroznia jezyki programowania i sa dedykowane dla okreslonego typu artefaktow
+
+artifactory firmy Jfrog - jedno z najpopularnejszych repo binarnych na rynku (obok Sonatype Nexus). Domyslnie jest narzedziem platnym, jednakze Jfrog
+udostepnia kilka wersji Opensource, ograniczonych do specyficznego rodzaju przyjmowanych artefaktow
+
+Darmowe wersje:
+PRO Trial - premium na 30 dniowy klucz przypisany do maila
+OSS (Java) - ograniczona do narzedzi arty Java: Maven, Gradle i Ivy oraz repo generic
+CE (C++) - podobnie, tylko C++
+Container Registry
+
+Rodzaje przykladowe:
+Maven - .jar .war .ear .pom Javowe
+Python - .py - Pythonowe
+Docker - obrazy dockerowe (braz rozszerzen)
+Debian - .deb Paczki instalacyjne Linuxow z Debianów
+
+Domyslne logowanie:
+admin
+password
+
+Odzyskiwanie admina
+Procedura odtworzenia konta za pomoca bootstrap.creds - musi byc umieszczony wew sciezki JFROG_HOME/artifactory/var/etc/access  i zawierac def przynajmniej
+jednego konta admina w formacie:
+<name>@*=<name>
+<password>@*=<password>
+
+Uruchomienie Artifactory w trybie CaC (configuration as code) trzeba przygotowac dwa pliki:
+artifactory.config.import.xml
+system.yaml
+
+Pierwszy plik daje kazdorazowe, pelne odwzorowanie wstepnego konfiga artifactory przy uruchomieniu nowego kontenera
+Drugi umozliwia pominiecie wizarda z GUI
+
+curl -XPOST -vu admin:password http://192.168.44.44:8081/artifactory/ui/jcr/eula/accept - gdyby nie kleplo EULA
+
+Typy repo:
+
+local - fizycznie i lokalnie zarzadzane medium, do ktorego mozna wysylac artefakty. Uzywane do wszystkich releasow (zarowno wew jak i zew), takze do buildow
+deweloperskich
+
+remote - sluzy jako pamiec cache (lokalna) do przechowywania plikow bin z zew stron
+Moze byc wykorzystywany m.in. do lokalnego zapisania okreslonej wersji pliku instalacyjnego cudzego np Dockera czy Javy
+
+wirtualne - agregator, w ramach ktorego wyswietlamy zarówno z lokalnego jak i zdalnego pod jednym URL
+
+dystrybucyjne - umozliwiaja przenoszenie artow z Artifactory do Bintray, gdzie udostepniamy enduserom
+Nie specyfikuje określonego formatu paczki, w zamian def zestaw zasad do jakiego typu plik się odnosi. Bardzo rzadko uzywane
+
+Insecure Container Registry
+
+Aby wysylac arty Dockera do Artifactory, musimy wymusic na docker daemonie mozliwosc laczenia sie do not secured Container Registry
+
+Insecure-registry (niezabezpieczony rejestr) to taki, ktory nie posiada skonf certow SSL
+
+Aby uruchomic, uruchamiamy plik init.yml znajdujacy sie w folderze playbooks. w repo Vagrant i w sekcji vars dokleic dodatkowa sekcje
+docker_daemon_options:
+  insecure-registries: ["192.168.44.44:8082"]

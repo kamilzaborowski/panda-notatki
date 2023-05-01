@@ -1,0 +1,29 @@
+JENKINSFILE
+
+Niezbedne kroki do implementacji pipeline:
+
+1. Uruchamianie tylko na wyznaczonym wezle
+2. Instalacja podstawowych narzedzi
+3. Pobranie plikow z repo
+4. Etapy budowaniua i testowania apki
+5. Publikowanie obrazu w artifactory
+6. Czyszczenie Jenkinsa
+
+
+Piszac Pipeline w sposob declarative czasem musimy odwolac sie do starszej skryptowej metody
+Aby to zrobic wystarczy w definicji steps dodac blok script. Mozemy np w nim umiescic docker.build
+
+Post to element Pipeline, który wykonuje się na końcu poszczególnego kroku lub całego Pipeline. Post uruchamia się w zależności 
+od zdefiniowanego warunku:
+
+always – wykonuje się zawsze
+failure – wykonuje się tylko przy błędzie
+success – wykonuje się tylko, gdy Pipeline zakończył się poprawnie
+aborted – wykonuje się tylko, gdy Pipeline został przerwany
+
+JENKINSFILE - plik tekstowy, ktory przechowuje definicje flow pracy Jenkinsa jako kod. Dzieki temu moze byc przechowywany w systemie kontroli wersji jak git.
+
+Kontroler Jenkinsa moze zostac w calosci skonfigurowany za pomoca kodu
+Tworzenie projektow Jenkinsa z plikow umozliwia Job DSL (Domain Specific Language). Jego konfig jest prosty i dobrze opisany w oficjalnym repo
+ZAD DOMOWE NA TO !!! - zrobione poprawione (sekcja jobs w casc.yml)
+Poszukac seedjob

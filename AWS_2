@@ -1,0 +1,64 @@
+AWS CLI - umozliwia komunikacje i interakcje z uslugami AWS z linii komend
+Access key i secret key - chcac uzywac AWS CLI musimy pobrac klucze (create access key)
+
+aws configure --profile panda - konfig CLI (profile panda jest czescia opcjonalna)
+Zapyta o:
+AWS Access Key [ID]
+AWS Secret Access Kye [None]
+Default region name [None]
+Default output format [None] np JSON
+
+Po wykonaniu w sciezce ~/.aws powinien zawierac:
+credentials - przechowuje dane dostepowe
+config - konfigi dla AWS CLI
+
+S3 - simple storage service - Przechowywanie plikow, mozna postrzegac jako DropBox w chmurze.
+Pliki wew S3 zebrane sa w buckety zorganizowane poprzez sciezki.
+Mocno zintegrowany z innymi serwisami AWS, ktore potrzebuja dostepu do plikow statycznych jak:
+Lambda, CloudFormation, CodeBuild, ECS, CloudWatch, CloudFront, EC2 (trzymanie key pair) itp
+
+Wymagania nazwy bucketa:
+male litery
+bez underscore
+Unikatowa nazwa na caly swiat
+Dlugosc nazwy: 3-63 litery/cyfry
+Nie moze byc wartoscia IP
+Nie moze zaczynac sie znakiem specjalnym
+
+Ograniczenia:
+pojedynczy plik max 5TB
+By wyslac plik >5GB, nalezy uzyc multi-part upload
+
+Mozliwosci:
+Wersjonowanie i szyfrowanie plikow
+Server access logs
+Dodatkowa polityka bezpieczenstwa poprzez bucket policy i bucket access control list
+Tworzenie statycznych stron internetowych (pliki: 1 html, opcjonalnie 1 js i 1 css)
+Wyzwalanie zdarzen (S3 events triggering)
+
+ECR - Elastic Container Registry 
+W pelni kompatybilny z Docker CLI (dziala docker login, pull, push itp)
+Wymaga uprawnien AWS CLI (jak z reszta kazda integracja z serwisami AWS w terminalu)
+Poza skladowaniem obrazow, usluga oferuje rowniez:
+- Resource based policy
+- Lifecycle policy
+- Simple image scanning
+
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin <nr_konta_AWS>.dkr.ecr.us-east-1.amazonaws.com
+docker build -t <nazwa_repo_ECR> .
+docker tag <nazwa_repo_ECR>:latest <nr_konta_AWS>.dkr.ecr.us-east-1.amazonaws.com/<nazwa_repo_ECR>:latest
+docker push <nr_konta_AWS>.dkr.ecr.us.east-1.amazonaws.com/<nazwa_repo_ECR>:latest
+
+Application Load Balancer - rozdziela ruch po HTTP(S)
+Indywidualne zapytania pozwalajace na ich kierowanie bezposrednio do wybranej apki (portu). Pozwala na zaawansowane reguly przesylania danych
+
+Network Load Balancer - Przekierowuje ruch TCP/UDP/TLS. Bardzo wydajny i powinien byc uzywany przy duzych obciazeniach lub gdy sa potrzebne niskie
+opoznienia
+
+Classic Load Balancer - najprostszy rodzaj LB, pozwala rozdzielic ruch pomiedzy EC2, nie preferowany, gdy mozemy uzyc innej opcji
+
+Target group - odbiorca ruchu od ALB, jest ponad podzialami jesli chodzi o podsieci i AZ. Do target groupy mozemy zarejestrowac EC2, klastry ECS lub
+funkcje Lambda
+
+Health check w TG pozwala automatycznie zatrzymac przekierowywawania ruchu do instancji, ktore go nie zwracaja. Pozwala to na odciecie ruchu
+do apki, która przestaje dzialac.

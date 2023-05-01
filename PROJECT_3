@@ -1,0 +1,35 @@
+Jenkins agent - testy automatyczne
+
+Agent - instancja (serwera, kontrolera) polaczona z kontrolerem (controller) Jenkinsa
+Na gencie budowane sa apki, by nie obciazac kontrolera
+
+Za ich pomoca podpietych do jednego controller, mozna budowac apki w roznych regionach np w Europie i Chinach.
+Mozna tez rownolegle budowac apki dedykowane dla roznych systemow np Windows i Android
+
+Metody laczenia z agentem:
+ssh
+java -jar agent.jar
+agent.jar w GUI
+
+Czemu Jenkins agent ?
+
+odciaza kontroler wykonujac zlecone zadania
+dedykowany dla roznych sys oper
+wykonywanie zadan w roznych regionach np w EMEA i APAC
+dynamicznie uruchamiany i latwo skalowany
+uruchomiony jako kontener, VM lub zwykly serwer
+komunikacja push/pull
+
+Docker socket - gniazdo /var/run/docker.sock z maszyny hosta w tej samej sciezce wew kontenera, pozwala mu na komunikacje z silnikiem kontenera uruchomionym
+na hoscie. Dzieki takiemu polaczeniu mozemy m.in. budowac obrazy z wew Agenta dzialajacego w kontenerze
+Warto pamietac, by roztropnie wykorzystywac te funkcjonalnosc, jako ze niesie ona za soba ryzyko najwyzszych uprawnien na hoscie z poziomu kontenera
+Laczenie sie po API
+De facto, dalismy dostep root dla agenta do jenkinsa !!! Stad nalezy uwazac, warto miec je odizolowane od reszty urzadzen
+
+Sa rozwiazania np Podman - by laczyc je bez roota
+
+Przeplyw pracy Jenkinsa, ktory odpowiedzialny jest za budowanie
+
+SonarQube - analiza kodu pod wzgledem jego bezpieczenstwa, jakosci czy informacji o pokryciu kodu testami jednostkowymi
+
+

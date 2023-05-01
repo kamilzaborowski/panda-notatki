@@ -1,0 +1,35 @@
+Zadania praktyczne
+
+Ansible.tf
+Wykorzystujemy provisioner local-exec, uruchamiajacy komende lokalnie na maszynie, na ktorej wykonywane sa komendy terraform
+Funkcja timestamp przy kazdym uruchomieniu daje inny wynik. Dzieki temu nasz zasob bedzie za kazdym razem tworzony od nowa, wykonujac
+komende command
+
+Tworzenie security group
+ingress - ruch wchodzadzy
+egress - wychodzacy
+from_port <> to_port - zakres portow
+0 -65535 - kazdy mozliwy port
+0.0.0.0/0 - kazde mozliwy Ipv4
+
+alb.tf
+
+Wyjatkowe zasoby w AWS
+aws_default_subnet/vpc
+Nie tworza zasobow w AWS, lecz pobieraja info o zasobach domyslnych
+Te zasoby sa wyjatkowe, gdyz pobieranie danych nie odbywa sie za pomoca bloku data.
+
+Typ "application" tworzy alb
+[*] - spread operator - zwraca liste zasobow lub atrybuty zasobow jako liste
+
+ARN - unikalny id danego zasobu AWS
+default_action - blok, w ktorym opisujemy co stanie sie jesli LB wykryje ruch na listenerze.
+W tym przypadku przekaze dalej request do konkretnej Target Group (TG)
+
+target_type = "instance" - odbiorca ruchu bedzie instancja EC2. W przypadku ALB inne opcje to: Lambda, ECS czy prywatne IP
+Target Group musi byc osadzona w konkretnym VPC.
+
+Konfigurujemy przypisanie (attachment) instancji EC2 (po ID) do TG (po ARN)
+length(aws_instance.panda) - zwraca dlugosc listy zawierajacej utworzone instancje EC2, czyli ich ilosc.
+Count okresla ilosc skonfigurowanych przypisan do TG, czyli dodajemy przypisanie dla kazdej instancji
+

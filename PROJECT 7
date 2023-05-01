@@ -1,0 +1,21 @@
+Kubernetes wdrożenie aplikacji
+GitOps - zarzadzanie infrastruktura oraz konfiguracja apki za pomoca repo Git
+Dzieki temu wszystkie zmiany w infrze oraz apce (konfiguracje i wersje) sa sledzone
+
+ArgoCD - proste narzedzie monitorujace repo i wdraza nowe zmiany bezposrednio na klastrze Kubernetes
+Dodatkowo wspiera SSO, dzielenie teamu na projekty oraz dodatkowe sposoby wdrozenia apki takie jak blue-green deployment lub
+canary deployment
+
+Gdy Argo CD jest częścią przepływu pracy, wtedy Jenkins może być używany tylko do budowania oraz testowania aplikacji.
+Korzystając z Argo CD Jenkins nie ma dostępu do klastra
+
+Kubernetes, do pobrania obrazów z prywatnego rejestru potrzebuje wstrzyknięcia poświadczeń. 
+Do definicji deploymentu lub PODa dodaj imagePullSecrets i zdefiniuj nazwę sekretu, który zawiera niezbędne hasła
+
+Kustomize wychodzi poza ramy kursu, jednak ArgoCD potrzebuje go do swojego działania.
+
+Aplikacją w Argo nazywamy zdefiniowane repozytorium oraz ścieżkę do folderu z plikami aplikacji,
+którą chcemy wdrożyć na klaster. Jest to dodatkowy zasób kubernetesa, dzięki temu możemy taką aplikację przechowywać w pliku i
+wdrażać jak każdy inny zasób kubernetesa.
+
+Image updator sprawdza adnotacje zdefiniowane w aplikacjach Argo. 

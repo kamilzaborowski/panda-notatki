@@ -1,0 +1,92 @@
+PRACA Z GAŁĘZIAMI
+
+Referencja - odnosnik zawierajacy hash commita
+Jest w .git
+
+Nazwa galezi - wskazuje na commit "na czubku" (ostatni dodany commit)
+Etykieta - commit, do ktorego przypielismy tag
+Remote - commit w zdalnym repo
+Nagłówek (HEAD) - wskazuje na commit na ktorym obecnie pracujemy
+
+Rodzaje referencji
+
+BEzposrednia (hash)
+
+Symboliczna np:
+cat remotes/origin/HEAD
+ref: refs/remotes/origin/master
+
+git checkout <branch> - ostatni commit galezi
+git checkout <tag> - konkretny hash commitu
+git checkout <commit> - detached mode - przełącza na nagłówek na wybrany commit 
+Dlaczego staramy unikać się detached mode ? - Można zniszczyc w ten sposób hierarchie naszych commitow
+
+Poprzez head mozemy sie odwolywac do rodzicow commita:
+HEAD~n - cofnij o n commitow
+HEAD^x - cofnij do rodzica nr x
+
+git log <branch> - pokaze commity danego brancha
+git log -- branches - pokaze commity wszystkich branchy
+git log --all --oneline - pokaze wszystkie commity w ogole
+
+git merge - sluzy do laczeni ze soba galezi
+tworzy nowy commit z 2 rodzicami
+odtwarza po kolei dokonane zmiany z dolaczonej galezi
+
+git merge ma 2 sposoby: z fast-forward i bez fast-forward
+
+Fast-forward gdy galezie sie nie rozdzielaja, nie utworzy nowego commitu
+Bez fast-forward - gdy na galezi do ktorej dociagamy zmiany powstana commity, zostanie utworzony nowy commit z dwoma rodzicami
+
+git merge --no-off - wylacza fast-forward
+git merge --no-commit - wylacza auto tworzenie commita (zadziala tylko, gdy ma zostac utworzony nowy commit, nie dziala z fast-forward)
+git merge --no-commit --no-ff - zmiany zostana dodane jedynie na poziomie stagingu
+
+Merge conflict
+
+Przy powstaniu zmiany w tym samym miejscu kodu, na galezi na ktorej jestesmy i domergowujemy, moze wystapic merge conflict
+Aby poprawic konflikt musimy recznie poprawic plik, a nastepnie dodac do stagingu (git add)
+
+git commit uzyjemy po rozwiazaniu wszelkich konfliktow, by dodac je do commitu tworzonego przez merge (git merge przygotuje predefiniowana tresc
+commit message)
+
+merge conflict nie jest w domysle bledem !!!
+
+Rebase
+
+Sluzy do laczenia ze soba galezi
+Tworzy nowe commity z rodzicem na ktorym wskazuje HEAD
+ODtwarza po kolei zmiany dokonane na dolaczanej galezi
+Usuwa dolączaną gałąź
+
+Byly dwie galezie, weszlismy na dev, rebase master dociagnal dwa ostatnie commity z "dolu" mastera, tworzac nowe jako ich kopie,
+majac juz jedna linie, moglismy zrobic git merge fast-forwardowo
+
+Merge vs rebase
+
+Merge tworzy jeden nowy commit, stare nie zostaja zmienione
+Rebase tworzy tyle nowych commitow, ile na dolaczanej galezi, stare commity usuwane
+
+Reset - odrzuca zmiany dokonane w wybranym obszarze repo (working directory, staging, commit history) wzgledem wybranej referencji lub commita
+
+git reset <commit> --mixed - cofa commit i stagowanie (czyli cofa tez git add)
+git reset <commit> --soft - cofa tylko commit, zostaje w staged (zostaje git add)
+git reset <commit> --hard - cofa commit, staging i wszystkie zmiany w working directory na pliku
+
+git reset <ref><plik> - przywraca stan stagingu wzgledem wybranej referencji lub commita, domyslnie <ref> = HEAD
+
+git checkout <ref><plik> - przywraca plik wzgledem wybranej referencji lub commita, domyslnie <ref> = HEAD
+NADPISUJE ZMIANY DOKONANE W WORKING DIRECTORY
+
+Revert
+Tworzy nowy commit, ktory odwraca zmiany dokonane w wybranym commicie
+
+Uzyteczny, gdy chcemy zachowac historie zmian np przy wspolnej pracy na jednej galezi lub pomiedzy wersjami
+
+reset vs Revert
+
+Revert tworzy nowy commit, ktorego HEAD jest rodzicem
+Reset cofa zmiane, nie tworzy nowego commita, cofa do wybranego
+
+Revert najczesciej stosowany do repo zdalnego, bo nie modyfikuje historii zmian
+

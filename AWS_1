@@ -1,0 +1,65 @@
+EC2, IAM, VPC
+
+Cloud computing - zestaw uslug, pozwalajacy na dostarczanie zasobow IT (np serwerow, mocy obliczeniowej, zasobow sieciowych, DB) poprzez Internet on demand
+usera.
+W zależnosci od potrzeb, chmura pozwala na stworzenie dodatkowej warstwy abstrakcji, oddzielajacej usera od zarzadzania wybranymi elementami infry.
+
+AWS sklada sie z wielu regioniow. W kazdym z nich znajduja sie Availability Zones, meidzy ktorymi opoznienie polaczenia jest wysoce zoptymalizowane (low-latency)
+Alternatywnie mozemy stosowac Local Zones, ktore maja na celu zapewnienie bardzo niskiego pingu miedzy userem a chmura.
+Wszystkie te rozwiazania maja na celu zapewnienie niezawodnosci i stabilnosci w przypadku awarii ktoregos z punktow.
+
+AWS Budget and Cost Management - kontrola naszych wydatkow oraz ukladanie planow budzetowych w AWS
+
+Mozna tez z kalkulatora calculator.aws
+
+EC2 (Elastic Compute Cloud) - usluga dostarczajaca moc obliczeniowa dla twojej chmury. EC2 to maszyna wirtualna wraz z pelna konfig sieciowa
+Uzycie EC2 jest najprostszym sposobem skorzystania z uslug AWS.
+
+Pojecia z EC2:
+AMI - Amazon Machine Image - obraz wirtualki
+EBS - Elastic Block Storage - przestrzen dyskowa, ktora tworzymy dodatkowo, a nastepnie montujemy do naszej instancji
+EFS - Elastic File System - jak EBS, ale mozna go montowac do wielu instancji jednoczesnie (odpowiednik NFS - network file system)
+User Data - Skrypt uruchamiany przy starcie instancji. Umozliwia wprowadzenie zmian juz po stworzeniu instancji (np wystartowanie apki
+czy pobranie danych)
+
+Konfig instancji EC2 - pozwala na wybranie AMI - bazowego obrazu instancji z sys oper. Mozemy wybrac gotowe obrazy od Amazona lub skorzystac
+z AMI przygotowanego przez nas.
+
+Pozwala na wybranie typu instancji. Od wybranego typu zaleza przydzielone naszej instancji zasoby takie jak RAM czy CPU, a co za tym idzie naliczane
+koszta. Dla free tier dostepne jedynie t2.micro i t3.micro
+
+Pozwala na wybranie rodzaju i rozmiaru pamieci dyskowej przydzielonej naszej instancji. 3 do wyboru:
+General Purpose SSD - zwykly SSD
+Provisioned IOPS SSD - SSD ze zwiekszona iloscia operacji na sek (IOPS)
+Magnetic - dysk magnetyczny
+
+Mozna dodac tagi. Dobra praktyka to nadanie Name oraz właściciela/twórcy
+
+Konfig Security Group, odpowiedzialny za zarzadzanie dostepnoscia portow sieciowych instancji.
+
+IAM - centrum zarzadzania dostepami dla userow i serwisow w chmurze AWS
+
+groups, users, roles, policy rules:
+Groups - grupowanie userow  z konkretna lista uprawnien
+Users - wszyscy userzy majacy dostep do naszej chmury AWS
+Roles - grupy uprawnien, ktory dany user, serwis lub resource chmury moze przyjac w celu wykonania odpowiedniego zadania
+Policies - uprawnienia do danego zasobu naszej chmury AWS, ktore nastepnie mozna assignowac do danej grupy, usera lub roli
+
+Grupa tworzona poprzez nadaniu jej imienia
+NAtomiast userow tworzymy na 2 metody logowania:
+Programmatic access - nadajemy userowi access key ID i secret access key do komunikacji API AWS zamiast konsoli GUI
+AWS Management Console Access - decydujemy, czy user powinien miec dostep do konsoli GUI. PRzydatne przy tworzeniu kont technicznych
+do automatyzacji operacji np poprzez Jenkinsa
+
+VPC - wirtualna siec przypominajaca siec w biurze, domu czy duzym budynku. Mozemy zdefiniowac siec glowna, podsieci, firewalle 
+(Security Groups, Network ACL), serwery NAT i wiele innych.
+Dzieki temu jestesmy w stanie odizolować niektore z naszych uslug i nadac dostep do nich tylko wybranym adresom lub rolom
+
+Internet Gateway - automatycznie skalowalny, wysoce dostepny komponent VPC, pelniacy role:
+- zapewnia instancjom wew VPC komunikacje z Internetem
+- dziala jako NAT dla instancji, ktore posiadaja publiczne adresy IPv4
+
+Public subnets - podsieci, do ktorych mozliwe jest bezposrednie polaczenie z netem poprzez Internet Gateway
+Private subnets - podsieci z ograniczonym lub calkowicie zablokowanym polaczeniem z Internetem. Najczesciej sieci takie korzystaja
+z serwera NAT, ktory umozliwia komunikacje
+

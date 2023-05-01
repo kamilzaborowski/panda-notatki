@@ -1,0 +1,96 @@
+Prometheus, Grafana, ELK Stack
+
+Monitoring - krytyczny element zarzadzania infra IT
+
+Pozwala na wykrycie niepozadanych zdarzen, zanim stana sie grozne dla proda
+Monitoring wysyla alarmy najczesciej do supportu
+Gdy nie moze byc naprawiony, przekazujemy devom
+
+W DevOps na rowni powinni zajac sie tym devi i admini
+
+Przyklady: ZABBIX, NAGIOS, SENSU, DATADOG, DYNATRACE, SYSDIG
+
+Apki monit najczesciej dzielimy na logi, metryki, tracingu (sledzenie komunikacji)
+
+Istnieja 2 obszary:
+APM - application monitoring
+ITIM - IT Infrastructure monitoring
+
+W przypadku technologii chmurowych, calosc danych, najczesciej dostepna jest w obrebie jednej platformy
+
+Monitoring odpala alarmy na podstawie threshold'ow lub wystapienia okreslonej wartosci liczbowej
+
+Progi najczesciej dzielimy na:
+Critical (red) - w jego przypadku nalezy podjac akcje od razu
+Warning (amber/yellow) - Mowi o wystapieniu problemu
+Wartosci progow mozemy ustawic wobec wlasnie powyzszych kryteriow (np wolny RAM wartosc na yellow i wartosc na RED)
+
+Prmoetheus - glowny komponent monitorignu, spelnia funkcje:
+
+Zbiera i monitoruje metryki z exporterow
+Pozwala na sprawdzenia laczenia z exporterami
+Jest baza danych szeregu czasowego (time series)
+Okresla progi dla metryk, a przy ich przekroczeniu powiadamia Alertmanager
+Wystawia dane dla Grafany (wizualizacja danych)
+Pozwala na budowanie podstawowych zapytan i robienie wykresoe dla danych monitoringu (lepiej nadaje sie do tego Grafana)
+
+Exportery - male serwisy, ktore zbieraja a nastepnie udostepniaja metryki dla Prometheusa.
+
+Exportery na kliencie:
+Node exporter - monitoruje zasoby takie jak CPU, RAM, HDD czy NIC
+CAdvisor - dzieki poalczeniu z socketem dockera pozwala na monitorowanie dzialania kontenerow
+
+Na serwerze:
+Blackbox exporter - monitoruje dostepnosc URL uzywajac roznych protokolow. Pozwala na utowrzenie metryki bazujacej na odp wykonanego zapytania
+Database exporter - Monitoruje DB, najczesciej poprzez polaczenie sie z nimi jako user z haslem
+
+Grafana - prezentuje dane w przystepnej dla czlowieka wersji. Udostepnia duza liczbe gotowych dashboardow, obslugujacych wiele roznych zrodel.
+Pozwala na ustawienie powiadomien na podstawie prezentowanych danych
+
+Alertmanager - rozdziela powiadomienia (routing) alarmow stworzonych przez Prometheusa, do roznych kanalow komunikacji np Discord, Slack, e-mail.
+Pozwala na skonfigurowanie wielu grup w zaleznosci od wybranych zasad moze bazowac np na typie lub etykiecie alarmu
+
+Dzieki niemu mozna wyciszyc powiadomienia dla danego alarmu na okreslony czas, co przydaje sie przy troubuleshootingu czy ponownym stawianiu maszyny
+
+Grafana i Prometheus najczescie sa w jednej podsieci
+
+Logowanie
+
+ELK stack - najpopularniejsze, darmowe narzedzie do zbierania logow. Sklada sie na 3 apki:
+Logstash - agregator, ktory zbiera dane i dzieli je na odpowiednie pola, a nastepnie przesyla do Elasticsearch
+Elasticsearch - DB, ktre przechowuje dane oraz umozliwia ich szybkie wyszukiwanie
+Kibana - narzedzie do wizualizacji. Pozwala na przeszukiwanie danych z elasticsearch oraz rysowanie wykresow na ich podstawie
+
+Elasticsearch jest darmowa i rozproszona baza danych NoSQL, dedykowana analizie danych i szybkiemu ich wyszukiwaniu (search engine)
+Napisany w Javie
+
+Dane dzielone na indices, pozwalajace na szybkie wyszkiwanie danych. W przypadku ELK indices najczesciej odpowiadaja danej dacie lub godz
+Dodatkowo indices dzielone sa na shards w celu replikacji i rozproszenia danych
+
+DB elasticsearch zatrzymuje operacje zapisu, gdy wykryje ze konczy sie miejsce na dysku (default 80 % zajetosci)
+Blokuje mozliwosc zapisu na wszystkich indices (indeksach)
+Aby je odblokowac nalezy najpierw zwolnic miejsce na dysku, a nastepnie usunac flage read_only uzywajac REST API
+
+Narzedzie zapewnia rowniez mozliwosc zadeklarowania wlasnych polityk retencji, ktore nastepnie mozemy przypisac do naszego indices i zapomniec o cyklicznym
+usuwaniu starych danych
+
+Logstash - GROK
+W konf Logstash definiujemy 3 kroki:
+Input - okresla w jaki sposob pobierane sa dane Przykladowo beats, file,tcp
+Filter - pozwala na obrobke logow oraz przypisywanie ich do wybranych pol, przykladowo grok, mutate,json
+Outpout - definiuje odbiorce danych, przykladowo elasticsearch, cloudwatch, csv
+
+Na wejsciu wystawiamy port na ktorym przyjmowac bedziemy dane z Filebeat (plugin beats)
+Dane na wyjsciu kierowane do elasticsearch
+Definiujemy adres hosta oraz nazwę tworzonego indices na bazie danych (%{+YYYY.MM.dd}).
+
+Filtry grok operuja na zasadzie wyszukiwania wzorca (bazujacego na regexie i przypisuje go do wybranego pola)
+Grok posiada zestaw gotowych def wzorcow (np na githubie)
+Narzedzie grok debugger pozwala na automatyczne generowanie dopasowan grokdebug.herokuapp.com
+
+W sekcji filter dokonujemy obrobki logow
+
+Kibana - narzedzie pozwalajace na wyszukiwanie oraz prezentacje danych tekstowych. Do konstrukcji zapytan uzywa KQL (Kibana Query Language), bazujacego
+na skladni jezyka Lucene, w ktorym wykonywane sa zapytania Elasticsearch.
+Pozwala na zaawansowane metody obrobki danych takie jak np eksperymentalne metody uzywajace machine learning
+

@@ -1,0 +1,17 @@
+Integracja Ansible i Terraform
+
+Uruchamiamy na wyznaczonym wezle
+Instalacja podstawowych narzedzi
+Pobieranie plikow z repo
+(dopisz z prezki)
+
+Bezpieczne dodanie poswiadczen dockerhub to dodanie ich do Jenkins Credentials
+Tak dodane klucze moga byc wstrzykniete bezposrednio do projektu Jenkinsa
+
+Username with password dla dockerhub
+AWS Credentials dla AWS (access key)
+
+Selenium Grid - samodzielna platforma pozwalajaca na wykonywanie testow Selenium, bez potrzeby instalowania skladnikow na lokalnym komputerze
+W sklad Selenium Grid wchodza:
+- Selenium Hub - pelni funkcje serwera, agregatora i load balancera dla przychodzacych zadan testowych, ktore nastepnie wykonywane sa w Node'ach
+-Selenium Node(s) - najczesciej przegladarki internetowe wraz z silnikami testowymi (np Firefox z Gecko Driver)

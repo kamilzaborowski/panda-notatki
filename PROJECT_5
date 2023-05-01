@@ -1,0 +1,22 @@
+SonarQube nie wspiera automatyzacji poprzez Ansible. Dlatego automatyzacja ta zostala wykonana za pomoca REST API Sonarqube.
+
+Pipeline - specjalny projekt definiujacy workflow w Jenkinsie.
+Sklada sie z etapow (stages) ktore moga byc uruchamiane wspolbieznie, a w przypadku wystapienia problemu, uruchamiane ponownie
+
+Pipeliny sa napisane w Groovym
+
+Pipeline Syntax - wbudowane w Jenkinsa narzedzie pomocnicze ktore generuje kod pipeline'a na podstawie wybranych elementow
+
+pipeline {
+
+}
+
+Snippet Generator - pozwoli wygenerowac kod, ktory mozesz wykorzystac wew pipeline np pobranie kodu z repo
+Declarative Directive Generator - wygeneruje kod dla elementow systemowych Jenkinsa np zmiennych srodowiskowych
+
+Scripted vs                                 Declarative
+starsza                                     nowsza metoda
+mniej czytelny i trudniejszy w pisaniu      czytelny i latwy w pisaniu kod
+brak walidacji kodu podczas uruchamiania proj  walidacja kodu przed startem projektu
+brak mozliwosci uruch proj od konkret etapu     mozliwosc startu od konkretnego etapu
+opcje sa wbudowana czescia logiki               

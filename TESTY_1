@@ -1,0 +1,85 @@
+Testowanie - proces wchodzacy w sklad LCM
+Nadrzedne zadanie testowania to weryfikacja, czy wytworzone oprogramowanie jest:
+dzialajace
+zgodne ze spec
+safe
+kompatybilne z dotychczas wytworzonym oprogrm
+napisane zgodnie ze standardami w organizacji
+
+Testom poddajemy kod apki, gotowa apke, platforme, na ktorej dziala apka
+
+Mozna podzielic na ich typy i poziomy
+
+Sa niezalezne od siebie, jednakze wdrazajace je organizacje dowolnie moga laczyc poziomy i typy testow w zaleznosci od swoich potrzeb
+
+Typy testow:
+Funkcjonalne - weryfikacja konkretnych wymagan wobec wybranego modulu apki
+
+Nie wymagaja posiadania wiedzy o wew strukturze testowanego modulu. Punktem odniesienia do takich testow sa zalozenia zawarte w dokumentacji
+
+Testy tego typu sa czarnoskrzynkowe
+
+Niefunkcjonalne - zakladaja przetestowania apki lub jej fragmentow bez zwiazku z jej funkcjonalnoscia
+Testujemy wiec niezawodnosc, efektywnosc, skalowalnosc danego elementu
+Najczesciej wymagaja przygotowania dedykowanego srodowiska testowego, na ktorym wykonane zostana testy wydajnosciowe, obciazeniowe i przenaszalnosci
+Tez sa czarnoskrzynkowe
+
+Strukturalne - podanie do apki takich zestawow danych, ktore wyczerpia wszystkie dsotepne sciezki jej dzialania
+Wymagaja znajomosci kodu zrodlowego i pomagaja zpotymalizowac kod i zlokalizowac ewentualne bledy
+Sa to testy bialoskrzynkowe
+
+Potwierdzajace - sprawdzenie zachowania systemu po wprowadzeniu zmian w kodzie aplki
+W sklad wchodza m.in. testy regresji, czyli te, ktore sprawdzaja czy nowo wprowadzone zmiany i poprawki nie powoduja dodatkowych bledow
+
+Poziomy testow:
+
+Jednostkowe - sprawdzaja pojedyncze, jak najmniejsze fragmenty kodu np klasy czy metody
+Testowane elementy kodu powinny byc niezalezne, jednak w przypadku wystepowania zaleznosci stosowane sa metody mock lub stub, ktorych
+zadaniem jest symulowanie zachowania powiazanego modulu, nie bedacego obiektem aktualnego testu
+Celem testow jedn jest weryfikacja mozliwie wszystkich sciezek danego fragmentu kodu oraz przypadki brzegowe
+Testy te sa najczesciej pisane przez samych programistow w momencie implementacji kodu
+
+Testy integracyjne - sprawdzanie spojnosci poszczegolnych elementow modulow apki
+Pozwalaja na wykrycie bledow w interfejsach, integracji komponentow i systemow
+Przykladem sa testy typu end-to-end, ktore sprawdzaja caly program w celu potwierdzenia prawidlowosci przeplywu danych miedzy wszystkimi
+elementami skladowymi.
+
+Testy systemowe - powinny byc wykonywane na srodowisku jak najbardziej zblizonym do proda
+Pozwalaja wychwycic ewentualne bledy srodowiskowe, ktore moglyby wplynac na dzialanie apki
+Sprawdzane sa wymagania funkcjonalne i Niefunkcjonalne i uzywana jest technika czarnoskrzynkowa
+
+Testy akceptacyjne - uzyskanie akceptacji zamawiajacego apke
+Moga wystepowac na roznych etapach LCM np w trakcie instalacji lub integracji
+Testow wybranych modulow
+Testowania nowej funkcjonalnosci
+
+---
+
+Testy manualne - robione recznie, przez wykwalifikowanego testera
+Polega na przygotowaniu specjalnych przypadkow testowych i analizy ich wynikow, be oprogramowania automatyzujacego
+
+Testy automatyczne - nadzorowane przez wykwalifikowanego testera
+Opieraja sie na wstepnie przygotowanym scenariuszu testow, wspomaganym przez dedykowane programy automatyzujace
+
+Manualne vs auto
+
+Manual mniejszy koszt, bardziej elastyczne, szczegolnie przy malych zmianach, wieksza zlozonosc w przypadku skomplikowanych testow
+Auto szersze, pozwalaja wykryc wiecej bledow, wykonywane tak samo, szybsze, tworzenie i utrzymywanie skryptow moze byc drogie
+
+Selenium - zautomatyzowana platforma testowa dla aplikacji webowych
+Pozwala na tworzenie powtarzalnych testow funkcjonalnych
+
+Elementy:
+WebDriver - wykorzystuje API przegladarek
+Umozliwia symulowanie obslugi przegladarki dokladnie w taki sposob, jakby zrobilby czlowiek (popularne przegladarki)
+W Chrome nazywa sie EcoDriver
+
+Selenium GRID - wykorzystuje przypadki testowe stworzone z WebDrivera
+Pozwala na ich odpalenie na roznych platformach sprzetowych
+
+Selenium IDE - wtyczka do przegladarki. Mozna z jej pomoca nagrac wykonywane dzialania, a pozniej odtworzyc (dosc watpliwe jakosciowo)
+
+SonarQube - narzedzie sluzace do ciaglej analizy statycznej kodu pod katem jakosci. Umozliwia automatyczne wykrywanie bledow, slabych punktow
+powodujacych obnizenie bezpieczenstwa oraz tzw. "code smells".
+Oferuje wsparcie dla wielu jezykow programowania
+

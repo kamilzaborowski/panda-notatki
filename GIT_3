@@ -1,0 +1,139 @@
+Zdalne repo - pojecia
+
+remote - zdalne repo - mozna laczyc z wieloma jednoczesnie
+origin - domyslna nazwa repo, z ktorego dociagamy zmiany, tworzona gdy uzywamy komendy git clone
+upstream - galaz w zdalnym repo, ktora powiazana jest z galezia w repo lokal
+downstream - galaz w repo lokal dla powiazanej galezi w repo zdalnym (relacja jak wyzej tylko z punktu widzenia repo zdalnego)
+
+git remote add - dodaj zdalne repo
+git remote rm - usun zdalne
+git remote rename - zmiana nazwy repa
+git remote -v - wyswietli zdalne repa
+
+podstawowe pliki w repo
+
+.gitignore - lista plikow, ktore git powinien ignorowac
+LICENSE - plik licencji
+README.md(.rst) - plik z instrukcja obslugi / opsiem tego co znajduje sie w repo
+CHANGELOG.md - lista zmian w projekcie
+
+.gitignore 
+Dotyczy jedynie plikow dotad niesledzonych
+Uzywa wzorca prawie identycznego do znakow globalnych
+Lista czytana od gory do dolu. Ostatni wpis nadpisuje poprzednie
+Sciezki plikow (im blizej repo, tym wieksze prio):
+plik wskazywany przez core.excludeFile w .gitconfig
+plik w repo: .git/info/exclude
+plik w repo: .gitignore
+
+.gitignore uzywa wzorcow regexa
+
+do podpowiedzi mozna uzyc gitignore.io - zgeneruje dla danych technologii odpowiednie rzeczy do zignorowania
+
+git add * - dodaje wszystkie pliki i foldery w beizacym katalogu, nie uzywa plikow ukrytych
+praktycznie uzywa sie tylko git add .
+
+README.md - pierwsza strona ktora widac w githubie
+Zawiera najwazniejsze info o projekcie - do czego sluzy, jak odpalic etc
+Pisane w markup language (jak html) - jak markdown ktorego uzywalem do nauki pythona
+Po angielsku
+TO NIE JEST DOKUMENTACJA
+
+CHANGELOG
+Lista uporzadkowanych chronologicznie istotnych zmian w kazdej wersji produktu
+Powinien byc stale utrzymywany
+[Unreleased] - zmiany ktore nie byly dotad releasowane
+Kazda wersja bedzie miala swoja sekcje ze zmianami oraz data otwarcia i zamkniecia releasa
+Changelog uporzadkowany jest w kolejnosci od najnowsych do najstarszych
+
+GIT TAG
+Dodaje taga do wybranego commita
+
+Uzywane by oznaczyc commit ludzka nazwa, do ktorej mozemy odwolac sie jako referencji
+Najczestsze oznaczanie to oznaczanie wersji
+
+git tag <tag><ref> - tworzy etykiete na commit, default <ref> = HEAD
+git tag --push - wypchnie na galaz zdalna etykiete
+git tag -d <tag> - usun etykiete lokalnie
+git push origin :refs/tags/<tag> - po usunieciu etykiety lokalnie, uaktualnij (usuń) etykiete na repo zdalne
+
+git cherry-pick
+
+Dociaga konkretny commit z innej galezi
+Tworzy nowy commit poprzez odtworzenie wszystkich zmian pomiedzy dociaganym commitem, a jego rodzicem
+Jezeli commit ma wielu rodzicow nalezy wybrac wzgledem ktorego rodzica odtwarzamy zmiany
+Niewskazany, jezeli mozna uzyc innej metody
+
+git cherry-pick <ref> - dociagnij commit z wybranej ref
+git cherry-pick --continue - kontynuuj cherry-pick, jezeli nie mogl zostac wykonany (np merge conflict)
+cherry-pick --abort - odrzuc cherry pick, jezeli nie mogl zostac wykonany
+git cherry-pick -m<n><ref> - 
+
+Git flow - przez dlugi czas najpopularniejszy sposobow zarzadzania repo
+Operuja na dev i master - dev ostatnia dzialajaca wersja, a master wersje stabilne
+Pozostale uzywane galezie:
+feature, bugfix
+hotfix, release, support
+
+Dev i master powinny zawierac dzialajaca wersje apki
+Czubek (tip) galezi master powinien zawsze wskazywac na commit zawierajacy wydana, pelna wersje i byc oznaczony etykieta
+Master powinien byc aktualizowany jedynie w trakcie procesu releasu nowej wersji apki
+Dev to galaz integracyjna, na ktorej odbywa sie praca nad biezaca wersja produktu. Jezeli jakas nowa funkcjonalnosc sprawi, ze wersja
+apki na tej galezi przestanie dzialac powinno sie zawsze priorytezowac naprawienie bledu wystepujacego na tej galezi
+
+Galezie bugfix i feature
+
+Normalna praca rozwoju apki
+Odbijanie i dociagane do galezi dev
+Galaz feature/ - nowa funkcjonalnosc
+bugfix/ - poprawka do istniejacej funkcjonalnosci
+przed powrotem do galezi glownej powinno sie wystawic pull request w celu sprawdzenia przez inna osobe.
+Nie nalezy robic merge do dev zanim PR nie zostanie zaakceptowany
+Dobra praktyka jest tworzenie pojedynczego merge commita na dev, zamiast dodawania wszystkich commitow powstalych
+podczas pracy nad funkcjonalnoscia (tzw squash)
+
+Hotfix:
+
+Tworzona w przypadku naglej potrzeby wdrozenia poprawki w wydanej wersji, bez dodawania nowych funkcjonalnosci / poprawek rozwijanych na dev
+Galaz powinna nazywac sie hotfix/<wersja>. Odbijamy na master
+
+Release:
+Nie sluzy do dodawania nowych funkcjonalnosci, ewidentne zmiany przykladowo zle argumenty w kodzie, sposob pobierania kredek itp
+
+Support:
+Eksperymentalne - git flow nie jest do konca jasny w opisie implementacji
+Sa rowniez inne modele git flow
+
+pull (merge) request - inne osoby moga zrobic recenzje zmian
+Powinno robic sie z bugfix lub feature galezi do dev
+
+git stash - dodaj pliki z katalogu roboczego do schowka. Domyslnie dodawane sa pliki sledzone (tracked)
+git stash list - wyswietl liste schowkow
+git stash pop - przywroc zmiany zachowane w ostatnim schowku i usun schowek
+git stash pop stash@{n} - przywroc zmiany zachowane w n-tym schowku i usun schowek
+
+stash - u - untracked
+-a - pliki ignored
+
+git reflog - zapis wszystkich operacji w wykonanych w lokalnym repo
+pozwala odzyskac commity, kotre nie sa przyp do zadnej galezi
+Do commitow zapsianych w reflogu mozemy odnosie sie HEAD@{n}
+
+git blame - pokazuje historie zmian na pliku, kto i kiedy dokonal zmiany w repo, GUI najczesciej maja fajniejsze odpowiedniki, np VSC
+
+Podczas pracy z gitem uzywane sa dwie sciezki znajdujace sie w .git
+/hook /config
+
+Hooking - przejmowanie w locie dzialania funkcji przekazywanej wiadomosci lub wydarzenia
+
+w hooks usuwamy .sample, dodajemy skrypt i dajemy mu +x
+
+przykladowe hooki lokalnie
+
+pre-commit tworzenie commita
+commit-msg nadanie nazwy commitowi
+post-commit po zakonczeniu git commit
+pre-push - git push
+pre-receive - otrzymanie git push odpala sie jednokreotnie
+
+

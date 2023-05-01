@@ -1,0 +1,96 @@
+GIT
+Kazda operacja lokalna
+Mechanizm spojnosci danych
+Mozliwosc snapshotow
+
+Repo lokalne
+<repo_path>/.git/config
+Home catalog
+~/.gitconfig
+System
+/etc/gitconfig
+
+git init (na folderze w ktorym jestesmy) - odpala ten folder do gita i tworzy .git dla niego
+
+git config - zapisanie konfiga
+--global - dla home usera (wtedy obejmuje wszystkie potencjalne repa dla tego usera)
+--system - dla systemowego (/etc) (wtedy co wyzej, ale dla wszystkich userow i repow)
+
+git config --global user.name "Kamil Zaborowski"
+git config --global user.email "kamil.zaborowski@o2.pl"
+
+git w working directory (czyli naszym folderze wpietym do gita) ma dwa stany:
+tracked i untracked
+
+Kazdy nowo utworzony plik jest na poczatku untracked
+Plik nalezy dodac za pomoca git add <file>, od tego momentu jest tracked, wtedy mozemy go stage'ować (znamy historie zmian)
+
+Staged snapshot - indeks wskazujacy na pliki bedace kandydatami do przyszlego commita
+
+git log - historia zmian
+
+                                                    COMMIT
+{commit message 
+commiter
+commit date      {} --> metadata
+author
+author date }
+
+commit_id - hash
+tree - hash dla drzewa plikow
+parents - hash dla parentow
+
+git commit -m <wiadomosc>
+
+Ladne drzewko w terminalu na git: git log --graph --simplify-by-decoration --pretty=format:'%d' --all
+
+git add dodajemy nawet po usunieciu pliku (mozna tez git rm)
+
+git status - daje dosc obszerne info odnosnie stanu, synchronizacji, branch itp
+
+git checkout - przywraca do stanu biezacego commita (HEAD) - nie zadziala w przypadku zmian w ktoryms z plikow
+
+git checkout <ref> - przywroc do wybranej referencji (commit, branch), nie zadziala w przypadku zmian w ktoryms z plikow
+
+git checkout <plik> - przywroc konkretny plik do biezacego commita, USUWA ISTNIEJACE ZMIANY !
+
+Branches - pozwalaja na wspolna prace nad funkcjonalnosciami
+Od jakiegos czasu master zamienia sie w main (ale jeszcze nie wszedzie)
+
+git branch -d - usuwanie drzewa
+
+dev - najnowsze ZMIANY
+main - zawiera stabilne wersje produktu
+
+git diff - pokazuje roznic pomiedzy working directory a wybrana referencja
+np. git diff <plik>
+git diff <referencja>
+
+github - narzedzie do utworzenia zdalnego repo
+
+                                                        POBRANIE REPO
+file - lokalnie, brak autoryzacji
+ssh - bezpieczna (po kluczu SSH)
+git - najszybszy, brak autoryzacji, podobny do SSH, port 9418
+http(s) - wygodny, po kredkach, port 80/443
+
+git clone <protocol>://<adres_repo> <katalog_docelowy>
+
+git fetch - odswiez status ze zdalnego repo
+git merge - dociagnij zmiany
+git push - wypchnij zmiane
+git pull - odwiez status oraz dociagnij zmiany = git fetch + git merge
+
+git checkout -b <branch> - branch lokalnie
+git push --set-upstream origin <branch> - stworz galaz zdalna, polacz z lokalnym branch i wypchnij zmiany (origin to nazwa, zwykle nikt nie zmienia)
+
+git branch -r - lista zdalnych galezi w repo
+git branch -d - wpierw usun lokalnie
+git push origin <branch> - nastepnie branch zdalnych
+lub
+git branch -r --delete origin/<branch>
+
+
+token w pewnym ukryciu, ale uzywam ssh podpietego ;)
+
+git-school.github.io - do testowania branchy, jak po danych komendach git wyglada graficzne cale drzewo commitow z branchami

@@ -1,0 +1,44 @@
+Służy do zarządzania automatyzacja konfigu systemoów (configuration management), tworzenia nowych maszyn (provisioning) oraz instalacji aplikacji
+
+Łączy sie po SSH z maszynami, co przebija inne narzędzia, gdyż one instalują swoich klientów
+
+Chef czy Puppet mają agentów...
+
+Metodyki Pull i push
+
+Głównie chodzi przy pull o zapytaniu klienta do serwera, push na odwrót
+Czyli serwer ma zużycie przy push, mniej klienci :)
+Łatwiej równiez zarządzać Push'em, gdy architektura i ilość klientów jest stosunkowo prosta i mała
+
+Ansible pisany jest deklaratywnie, działa impodencyjnie (wykonuje zadanie tylko, gdy trzeba dokonać zmiany)
+
+inventory (tam gdzie przetrzymuje rzeczy) domyslnie w /etc/ansible/hosts, ale mozemy recznie zmienic
+W ramach tego mozemy zdefiniowac dowolna liczbe sekcji zawierajacych IPki, nazwy, grupy nazw serwerow, według pasujących nam reguł
+
+Playbook musi posiadać odwołanie do zdefiniowanego zestawu hostów z inventory (sekcja hosts) oraz def zadania (task) lub roli (role)
+
+Pojedyncze taski musza zawierac nazwe oraz odwolanie do modulu, wraz z argumentami
+
+ansible-playbook playbook.yml -i inventory (inventory tylko gdy inne niz domyslne)
+ansible-playbook play.yml --syntax-check - sprawdza poprawnosc pliku
+ansible-playbook play.yml --check Odpala dry-run, nie mylic z powyzszym !!!
+
+docs.ansible.com - super dokumentacja
+
+Dwa playbooki na Vagrancie w home :)
+become: true - odpal jako root
+
+Rola - komponent Ansible, do wykonywania wszystkich standardowych zadań a także dodawania elementów, takich jak pliki konfiguracyjne czy domyslne zmienne
+
+Ansible Galaxy - Tworzenie i zarzadzanie rolami oraz instalacje kolekcji
+galaxy.ansible.com
+
+ansible-galaxy install <rola> - pobiera role z oficjalnego repo
+ansible-galaxy install -r plik.yaml - wrzucamy role w yamlu (najczesciej requirements.yaml)
+requirements.yaml nie zawiera def nazwy oraz hostow, wymaga wpisania sekcji roles:
+
+playbook-role.yaml
+- name: Nazwa
+  roles:
+   - nazwa roli
+   version: wersja

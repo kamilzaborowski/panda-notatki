@@ -1,0 +1,20 @@
+Artifactory + srodowisko w docker compose
+
+Do budowania obrazu poprzez Jenkins uzywamy Dockera. Mozliwe dzieki gniazdu dockera
+Tag powinien byc unikalny, najlepiej uzyciem skrotu commita (8 pierwszych znakow) oraz numeru builda w projekcie w Jenkinsie
+
+W artifactory mozemy przechowywac oraz wersjonowac obrazy dockera. Moze byc odpalone lokalnie np w kontenerze lub scentralizowane np w chmurze
+
+Healthcheck - mechanizm sprawdzajacy czy kontener dziala zgodnie z naszymi oczekiwaniami
+Powinny posiadac odpowiednie API, ktore dostarczaja informacji o stanie aplikacji
+
+Przyklad umieszczenia go w docker-compose:
+
+healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost]
+  interval: 1m30s
+  timeout: 10s
+  retries: 3
+  start_period: 40s
+
+  

@@ -1,0 +1,102 @@
+Wstep do IaaC - Infrastructure as a Code
+
+Hashicorp Configuration Language (HCL) - wysokopoziomowy, deklaratywny jezyk konfiguracji, ktory zostal stworzony przez Hashicorp specjalnie
+dla Terraforma. Obecnie w uzyciu pozostaje drugie wydanie tego jezyka (HCL2), ktore wspierane jest przez Terraforma od wersji 0.12
+Glowne zalozenie HCL to latwa czytelnosc skladni
+Moze byc bezposrednio konwertowany do JSON, w celu interakcji z innymi narzedziami
+
+Bloki - podstawowe elementy tworzace jezyk HCL. Kazdy z nich reprezentuje zasob (resource) lub dostawce (provider). Caly kod musi znajdowac sie
+wew bloku
+Wew blokow definiujemy arg w formie key = value, ktore opisuja parametry naszej infry i jej konfigu
+Komentarze w HCL moga znajdowac sie w dowolnym miejscu (rowniez poza blokami)
+
+# komentarz
+// komentarz
+/* komentarz
+komentarz */
+
+typ_bloku "label1" "label2" {
+    argument = "wartość"
+
+    nested_block {
+        instructions
+    }
+}
+
+Zmienne:
+Podstawowe: Number, Bool, String
+Kolekcje: List [1,a,3], Map {k1:v1,k2:v2}, Set
+Strutkuralne: Objects {}"k1":"v1","k2":10,"k3":true}, Tuples ["v2",20,false]
+
+Terraform sam konwertuje typy zmiennych, jesli to mozliwe
+
+Definicje umieszczamy w main.tf. Zawiera minimalny zestaw danych potrzebnych do stworzenia instancji EC2:
+Provider aws:
+  region
+Zasob aws_instance:
+  typ instalacji
+  obraz AMI
+
+Konkretna wersja Terraform jest ustawiana przez required_version wew bloku required_providers.
+Mozemy tak zadeklarowac wersje oraz zrodlo wybranych providerow, np aws
+Kazda zmiana tutaj wymaga wykonania terraform init !!!
+
+Terraform ...:
+init - init katalogu .terraform. Nalezy wykonywac na przy rozpoczeciu pracy z nowym direm lub zmiana providerow
+plan - pokazuje jakie zmiany dokona terraform gdybysmy uzyli apply
+apply - tworzy infre
+destroy - niszczy infre
+show - pokazuje obecny stan infry
+state list - pokazuje liste obslugiwanych zasobow
+taint/untaint - ustawia / wylacza flage taint na zasobie. Zasoby z ta flaga sa ponownie tworzone podczas apply.
+validate - sprawdza pisownie i skladnie HCL
+providers - wyswietla liste zainstalowanych providerow
+fmt - formatuje skladnie HCL (wciecia odstepy, zagniezdzenia)
+refresh - odswieza lokalny stan Terraform by byl zgodny z remote state
+console - przechodzi w tryb interaktywnej konsoli, ktora ma dostep do zasobow Terraform 
+graph - teorzy graph stanu Terraform w SVG
+version - wyswietla aktualne wersje Terraform (i informuje o nowszej)
+
+Provider - zapewnia zestaw funkcjonalnosci oraz pozwala na globalna konfiguracje (np provider AWS: region, haslo)
+Resource - Konkretny element infry pozwalajacy na szczegolowa konfiguracje (np zasob EC2: typ instancji)
+
+Terraform.tfstate:
+Tworzy sie po wywolaniu terraform apply
+Jezeli juz istnieje, obecny plik jest kopiowany do pliku terraform.tsftate.backup, nastepnie zastepowany nowym
+Zawiera obecny stan infry, tak jak widzi go Terraform
+Brak lub zniszczenie pliku zwykle powoduje desynchronizacje stanu faktycznego z widzianym przez Terraform
+Mozna odswiezyc z uzyciem terraform refresh lub uzupelniony poprzez terraform import (uzywac w ostatecznosci)
+Poza zastosowaniem lokalnym powinien byc trzymany w odpowiednim miejscu (np S3 w AWS)
+
+Zmienne wejsciowe deklraujemy najczescie w variables.tf
+Zmienne posiadaja trzy opcjonalne atrybuty:
+description - opiz zmiennej
+default - domyslna wartosc. Jak nie zostanie podana lub nadpisana np w pliku .tfvars, Terraform zapyta sie o nia przy
+uruchomieniu
+type - typ zmiennej
+Do nich odwolujemy sie w innych blokach poprzez var.<nazwa_zmiennej>
+
+terraform apply -var-file <nazwa>.tfvars
+
+Locals
+Zmienne lokalne wspieraja DRY oraz pozwalaja na wykonywanie operacji pomocniczych, np przechowywanie wynikow funkcji
+Przyklady odczytu wartosci:
+local.az_size
+local
+po kropce nazwa zmiennej
+
+Interpolacja wartosci
+Terraform przed wykonaniem apply/plan, dokonuje Interpolacji wartosci, znajdujace sie w ${}. Przyklady:
+zmienna - "prefix-${var.zmienna}-postfix"
+map, list - "prefix-${var.zmienna["klucz"]}-postfix"
+
+Terrform pozwala na uzycie wbudowanych funkcji oraz operatorow logicznych jak np matematyczne, podmiana liter itp
+terraform.io/language/functions - lista funkcji dostepnych w Terraform
+
+Data - pobiera informacje o zasobach, ktore niekoniecznie musialy zostac stworzone przez Terraform.
+Przydatne gdy jest potrzeba uzycia np id najnowszego obrazu AMI Ubuntu
+
+output - pozwala na wyswietlenie danych po zakonczeniu dzialania terraform apply
+Po postawieniu infry, output mozemy zobaczyc w terraform output
+
+ZAD DOM OSTATNI SLAJD - przyjęto do wiadomości
